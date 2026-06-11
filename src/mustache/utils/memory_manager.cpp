@@ -75,7 +75,7 @@ const size_t MemoryManager::cache_size_l1d = get_l1d_cache_size();
 
 void* MemoryManager::allocate(size_t size, size_t align) noexcept {
     MUSTACHE_PROFILER_BLOCK_LVL_3("MemoryManager::allocate");
-#ifdef _MSC_BUILD
+#ifdef _WIN32
 #define ALIGNED_ALLOC(size, align) _aligned_malloc(size, align)
 #elif defined(ANDROID)
 #define ALIGNED_ALLOC(size, align) memalign(align, size)
