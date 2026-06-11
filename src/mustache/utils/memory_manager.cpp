@@ -125,7 +125,7 @@ void* MemoryManager::allocateAndClear(size_t size, size_t align) noexcept {
 void MemoryManager::deallocate(void* ptr) noexcept {
     MUSTACHE_PROFILER_BLOCK_LVL_3("MemoryManager::deallocate");
     if (ptr) {
-#ifdef _MSC_BUILD
+#ifdef _WIN32
         _aligned_free(ptr);
 #else
         free(ptr);
