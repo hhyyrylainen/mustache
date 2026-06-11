@@ -101,6 +101,10 @@ void* MemoryManager::allocate(size_t size, size_t align) noexcept {
         align = min_align;
         size = (size + align - 1) & ~(align - 1);
     }
+
+    // This will crash loudly if align is not a power of two.
+    // We could assert here, but that would make debug builds much slower
+
 #ifdef __APPLE__
     void* ptr = (align < 8) ? malloc(size) : ALIGNED_ALLOC(size, align);
 #else
@@ -109,9 +113,12 @@ void* MemoryManager::allocate(size_t size, size_t align) noexcept {
 
 #undef ALIGNED_ALLOC
 
+    // Can't fall back on Windows as cannot mix malloc and aligned free!
+#ifndef _WIN32
     if (ptr == nullptr) {
         ptr = malloc(size);
     }
+#endif
     return ptr;
 }
 
