@@ -21,6 +21,14 @@
 #include <sys/mman.h>
 #endif
 
+// Only x86/x86_64 have CPUID in the way this code expects.
+#if defined(__i386__) || defined(__x86_64__) || defined(_M_IX86) || defined(_M_X64)
+  #define MUSTACHE_HAS_X86_CPUID 1
+#else
+  #define MUSTACHE_HAS_X86_CPUID 0
+#endif
+
+#if MUSTACHE_HAS_X86_CPUID
 #ifdef _MSC_VER
 #include <intrin.h>
   void cpuid(int info[4], int leaf, int subleaf) {
@@ -36,11 +44,13 @@ void cpuid(int info[4], int leaf, int subleaf) {
                   reinterpret_cast<unsigned int&>(info[3]));
 }
 #endif
+#endif
 
 
 namespace {
 
     std::size_t get_l1d_cache_size() {
+#if MUSTACHE_HAS_X86_CPUID
         int info[4];
         std::size_t cache_size = 0;
 
@@ -63,6 +73,10 @@ namespace {
             }
         }
         return cache_size;  // в байтах
+#else
+        // Not available. Seems safe as the l1d cache size variable seems unused
+        return 0;
+#endif
     }
 
     std::mutex pages_mutex;
