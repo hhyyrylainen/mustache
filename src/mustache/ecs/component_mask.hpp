@@ -135,7 +135,7 @@ namespace mustache {
         static constexpr size_t static_mask_size = bitset_size - 2ull;
         static constexpr size_t use_dynamic_bit = bitset_size - 1ull;
         static constexpr size_t inverted_tail_bit = bitset_size - 2ull;
-        static constexpr size_t size_mask = ~(3ull << (sizeof(size_t) * 8 - 2));
+        static constexpr size_t size_mask = ~(static_cast<size_t>(3) << (sizeof(size_t) * 8 - 2));
         using  StaticBitset = std::bitset<bitset_size>;
         enum class Operation {
             kMerge,
