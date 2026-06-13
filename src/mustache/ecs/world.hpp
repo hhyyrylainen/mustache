@@ -37,6 +37,10 @@ namespace mustache {
             return entities_;
         }
 
+        [[nodiscard]] const EntityManager& entities() const noexcept {
+            return entities_;
+        }
+
         [[nodiscard]] SystemManager& systems() noexcept {
             if (!systems_) {
                 systems_ = std::make_unique<SystemManager>(*this);
