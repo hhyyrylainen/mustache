@@ -147,7 +147,12 @@ void* MemoryManager::allocateSmart(size_t size, size_t align, bool allow_pages, 
 #ifdef _WIN32
         ptr = VirtualAlloc(nullptr, size, MEM_RESERVE | MEM_COMMIT | MEM_LARGE_PAGES, PAGE_READWRITE);
 #else
+        // Only Linux has this, so we need to ifdef here to not fail on macOS
+#ifdef MAP_HUGETLB
         ptr = mmap(nullptr, size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
+#else
+        ptr = mmap(nullptr, size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+#endif
         if (ptr == MAP_FAILED) ptr = nullptr;
 #endif
         if (ptr) {
